@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${DB_NAME:-financetrackerdb}
+      POSTGRES_USER: ${DB_USERNAME:-appuser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-apppass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-appuser} -d ${DB_NAME:-financetrackerdb}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    env_file: .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-financetrackerdb}
+      DB_USERNAME: ${DB_USERNAME:-appuser}
+      DB_PASSWORD: ${DB_PASSWORD:-apppass}
+      OIDC_ISSUER_URI: ${OIDC_ISSUER_URI:-https://accounts.google.com}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

@@ -1,0 +1,41 @@
+# ====== Build output ======
+target/
+build/
+*.class
+*.jar
+*.war
+
+# ====== IDE files ======
+# IntelliJ / Rider
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# ====== OS junk ======
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# ====== Environment / secrets ======
+.env
+*.env
+application-local.properties
+
+# ====== Logs ======
+*.log
+logs/
+
+# ====== Maven ======
+.mvn/wrapper/maven-wrapper.jar
