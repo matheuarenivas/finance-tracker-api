@@ -96,10 +96,20 @@ public class ExampleRepository {
     }
 
     public List<ExampleEntity> findAllPaginated(String sortBy, String direction, int limit, int offset) {
-        String sql = ExampleQueries.buildPaginatedQuery(sortBy, direction);
-        if (sql == null) {
+        String column = ExampleQueries.resolveColumn(sortBy);
+        String dir = ExampleQueries.resolveDirection(direction);
+        if (column == null || dir == null) {
             throw new IllegalArgumentException("Invalid sort parameters: " + sortBy + " " + direction);
         }
-        return jdbcTemplate.query(sql, rowMapper, limit, offset);
+        return jdbcTemplate.query(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    ExampleQueries.FIND_ALL_PAGINATED_TEMPLATE
+                            .replace(":orderColumn", column)
+                            .replace(":orderDir", dir)
+            );
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+            return ps;
+        }, rowMapper);
     }
 }

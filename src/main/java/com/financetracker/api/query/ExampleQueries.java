@@ -53,16 +53,16 @@ public final class ExampleQueries {
     public static final String COUNT_ALL =
             "SELECT COUNT(*) FROM examples WHERE active = true";
 
-    /**
-     * Builds a safe paginated query using the column whitelist.
-     * Only returns active records. Returns null if sort column is invalid.
-     */
-    public static String buildPaginatedQuery(String sortBy, String direction) {
-        String column = SORT_COLUMNS.get(sortBy);
-        if (column == null || !VALID_DIRECTIONS.contains(direction)) {
-            return null;
-        }
-        return "SELECT " + COLUMNS + " FROM examples WHERE active = true ORDER BY "
-                + column + " " + direction + " LIMIT ? OFFSET ?";
+    public static final String FIND_ALL_PAGINATED_TEMPLATE =
+            "SELECT " + COLUMNS + " FROM examples WHERE active = true ORDER BY :orderColumn :orderDir LIMIT ? OFFSET ?";
+
+    /** Resolves a client-facing sort key to a safe column name via whitelist. Returns null if invalid. */
+    public static String resolveColumn(String sortBy) {
+        return SORT_COLUMNS.get(sortBy);
+    }
+
+    /** Validates and returns the direction. Returns null if invalid. */
+    public static String resolveDirection(String direction) {
+        return VALID_DIRECTIONS.contains(direction) ? direction : null;
     }
 }
